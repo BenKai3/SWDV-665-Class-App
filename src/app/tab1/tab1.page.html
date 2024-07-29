@@ -7,15 +7,13 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list *ngFor="let item of items; let i = index">
+  <h3 class="ion-text-center" *ngIf="loadItems().length === 0">
+    No items in the list
+  </h3>
+  <ion-list *ngFor="let item of loadItems(); let i = index">
     <!-- first list item -->
     <ion-item-sliding>
-      <ion-item-options side="start">
-        <ion-item-option color="success">
-          <ion-icon slot="icon-only" name="archive"></ion-icon>
-        </ion-item-option>
-      </ion-item-options>
-  
+
       <ion-item>
         <ion-label>
           <h2>{{ item.name }}</h2>
@@ -24,17 +22,20 @@
       </ion-item>
   
       <ion-item-options side="end">
-        <ion-item-option>
-          <ion-icon slot="icon-only" name="heart"></ion-icon>
+
+        <ion-item-option (click)="editItem(item, i)" color="success">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+          Edit
         </ion-item-option>
         <ion-item-option (click)="removeItem(item, i)" color="danger">
           <ion-icon slot="icon-only" name="trash"></ion-icon>
+          Done
         </ion-item-option>
+
       </ion-item-options>
+
     </ion-item-sliding>
   </ion-list>
-
-  <!-- <app-explore-container name="Grocery App"></app-explore-container> -->
 
   <ion-fab slot="fixed" vertical="bottom" horizontal="end">
     <ion-fab-button (click)="addItem()">

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ToastController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { GroceriesServiceService } from '../groceries-service.service';
+import { InputDialogService } from '../input-dialog.service';
 
 @Component({
   selector: 'app-tab1',
@@ -10,26 +12,12 @@ import { AlertController } from '@ionic/angular';
 export class Tab1Page {
 
   title = "Grocery App"
-  items = [
-    {
-      name: "Milk",
-      quantity: 2
-    },
-    {
-      name: "Bread",
-      quantity: 1
-    },
-    {
-      name: "Banana",
-      quantity: 3
-    },
-    {
-      name: "Sugar",
-      quantity: 1
-    }
-  ]
   
-  constructor(public toastCtrl: ToastController, public alertCtrl: AlertController) {}
+  constructor(public toastCtrl: ToastController, public alertCtrl: AlertController, public dataService: GroceriesServiceService, public inputDialogService: InputDialogService) {}
+
+  loadItems() {
+    return this.dataService.getItems()
+  }
 
   async removeItem(item: Item, index: number) {
     console.log(`removing item ${item.name} index: ${index}`)
@@ -38,45 +26,23 @@ export class Tab1Page {
       duration: 3000
     })
     await toast.present()
-    this.items.splice(index, 1)
+
+    this.dataService.removeItem(index)
+  }
+
+  async editItem(item: Item, index: number) {
+    console.log(`Editing item ${item.name} index: ${index}`)
+    const toast = await this.toastCtrl.create({
+      message: `Editing Item - ${item.name}...`,
+      duration: 3000
+    })
+    await toast.present()
+    this.inputDialogService.showPrompt(item, index)
   }
 
   addItem() {
     console.log("adding item")
-    this.showAddItemPrompt()
-  }
-
-  async showAddItemPrompt() {
-    const prompt = await this.alertCtrl.create({
-      header: 'Add Item',
-      // message: "add an item",
-      inputs: [
-        {
-          name: 'name',
-          placeholder: 'Name'
-        },
-        {
-          name: 'quantity',
-          placeholder: 'Quantity'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          handler: data => {
-            console.log('Cancel clicked')
-          }
-        },
-        {
-          text: 'Add',
-          handler: item => {
-            console.log('Add clicked', item)
-            this.items.push(item)
-          }
-        }
-      ]
-    })
-    await prompt.present()
+    this.inputDialogService.showPrompt()
   }
 
 }
